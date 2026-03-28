@@ -2,7 +2,6 @@
 from fastapi import FastAPI
 import sqlite3
 
-# IMPORTANTE: executa a criação do banco/tabela
 import app.database.db
 
 app = FastAPI()
@@ -85,4 +84,38 @@ def pegar_usuario(id: int):
 
     conn.close()
 
+    return dados
+
+@app.post("/produtos")
+def cria_produto(nome:str, categoria:str, preco: float):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute (
+        "INSERT INTO produtos (nome, categoria, preco) VALUES (?, ?, ?)", (nome, categoria, preco)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return {"msg": f"Adicionado produto '{nome}' de categoria '{categoria}' e preco R${preco:.2f}"}
+
+@app.get("/produtos")
+def pegar_produto(categoria:str = "", preco_maximo:float = 0, preco_minimo:float = 0):
+    conn = get_connection()
+    cursor = conn.cursor()
+   
+    query = "SELECT * FROM produtos WHERE 1=1"
+
+    if categoria:
+        query += " AND categoria = ?"
+    if preco_minimo > 0:
+        query += " AND preco >= ?"
+    if preco_maximo > 0:
+        query += " AND preco <= ?"
+
+    cursor.execute(query, (categoria, preco_minimo, preco_maximo))
+    dados = cursor.fetchall()
+
+    conn.close()
     return dados

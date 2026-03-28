@@ -8,6 +8,16 @@ CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
     idade INTEGER
+    
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS produtos(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    categoria TEXT, 
+    preco FLOAT
 )
 """)
 
