@@ -1,0 +1,31 @@
+NOME: João Pedro Leyssieux
+EMAIL: jplcampanella@gmail.com
+LINKEDIN: https://www.linkedin.com/in/jo%C3%A3o-pedro-leyssieux-campanella/
+GITHUB: https://github.com/joao27lex
+
+RESUMO PROFISSIONAL:
+Desenvolvedor Full-Stack e graduando em Engenharia de Controle e Automação pela UFRJ. Sólida experiência no desenvolvimento de softwares e sistemas embarcados utilizando Python, C++, JavaScript e TypeScript. Histórico de atuação em robótica competitiva (MinervaBots), englobando programação de microcontroladores, modelagem de banco de dados (PostgreSQL) e desenvolvimento ágil, além de experiência corporativa em rotinas de Supply & Operations.
+
+HABILIDADES TÉCNICAS:
+- Linguagens: Python, C++, JavaScript, TypeScript
+- Desenvolvimento Web: HTML, CSS, Bootstrap, React, Angular
+- Bancos de Dados: PostgreSQL
+- Sistemas Embarcados & Eletrônica: Altium365, ESP32, Arduino, STM32, Attiny, prototipagem, sensores e motores
+- Ferramentas & Versionamento: Git, GitHub, GitLab, GitKraken, Microsoft Excel Avançado
+
+FORMAÇÃO:
+- Graduação em Engenharia de Controle e Automação — UFRJ (2020 - Presente)
+- Full-Stack Development (Curso Profissionalizante) — IT STEP Computer Academy (2023 - 2026)
+
+CERTIFICAÇÕES:
+- The Complete Python Bootcamp — Udemy / Jose Portilla (2024)
+- Pandas & Data Visualization — Kaggle
+- Curso Completo de Microsoft Excel — Udemy / João Paulo de Lira
+- Programa de Aprendizagem em Gestão, Atendimento e Serviços — Instituto Tiago Mavichian
+- Empreendedorismo — SENAI CETIQT
+
+IDIOMAS:
+- Português (nativo)
+- Inglês (fluente — C1 no TOEFL)
+- Francês (iniciante — A2)
+- Espanhol (iniciante — A2)
