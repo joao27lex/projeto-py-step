@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 class Morador(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
     apartamento = models.CharField(max_length = 4)
+    cpf = models.CharField(max_length = 11, unique = True, null=True, blank=True)  
 
     def __str__(self):
         return f'{self.user.username} - Apartamento {self.apartamento}'

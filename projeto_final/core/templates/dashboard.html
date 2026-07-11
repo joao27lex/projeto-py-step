@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h1>Bem-vindo ao Dashboard, {{user.username}}!</h1>
+
+<div class="notificacoes">
+    <h3>Suas encomendas:</h3>
+    <p>Você tem {{ encomendas.count }} encomenda(s).</p>
+
+    <!-- TODO: botao que esconde essa parte do código -->
+    <div id="lista-encomendas" style="display: none; margin-top: 10px;">
+        {% if encomendas %}
+            <ul>
+                {% for encomenda in encomendas %}
+                    <li>{{ encomenda.descricao }} - Recebido em: {{ encomenda.recebido_em|date:"d/m/Y" }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Não há encomendas no momento.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class = "listaBotoes">
+    <a href="{% url 'lista_areas' %}"><button>Áreas Comuns e Reservas</button></a>
+    <a href="{% url 'lista_visitantes' %}"><button>Gerenciar Visitantes</button></a>
+    <a href="{% url 'lista_veiculos' %}"><button>Meus Veículos</button></a>
+</div>
+{% endblock %}
