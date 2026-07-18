@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h3>Lista de Veículos:</h3>
+
+    {% if veiculos != None %}
+        <ul>
+            {% for v in veiculos %}
+
+                <li>{{v.marca}} {{v.modelo}}</li>
+                <ul>
+                    <li>{{v.placa}}</li>
+                    <li>{{v.ano}}</li>
+                    <li>{{v.cor}}</li>
+                </ul>
+
+            {% empty %}
+                <p>Nenhum veículo cadastrado.</p>
+            {% endfor %}
+        </ul>
+    
+{% endblock %}

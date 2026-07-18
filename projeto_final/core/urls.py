@@ -1,13 +1,19 @@
+import views
 from django.urls import path
-from .views import LoginMoradorView, dashboard_morador
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
-    path('login/', LoginMoradorView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('dashboard/', dashboard_morador, name='dashboard'),
-    path('lista_areas/', dashboard_morador, name='lista_reservas'),
-    path('lista_visitantes/', dashboard_morador, name='lista_visitantes'),
-    path('lista_veiculos/', dashboard_morador, name='lista_veiculos'),
+    path('login/', views.login_morador, name='login'),
+    path('dashboard/', views.dashboard_morador, name='dashboard'),
+
+    path('lista_areas/', views.lista_areas, name='lista_areas'),
+    path('lista_areas/reservas/', views.lista_reservas, name='lista_reservas'),
+    path('lista_areas/reservas/adicionar/', views.adicionar_reserva, name='adicionar_reserva'),
+    path('lista_areas/reservas/deletar/<int:reserva_id>/', views.deleta_reserva, name='deleta_reserva'),
+
+    path('lista_visitantes/', views.lista_visitantes, name='lista_visitantes'),
+    path('lista_visitantes/apagar/<int:visitante_id>/', views.deleta_visitantes, name='remover_visitante'),
+    
+    path('lista_veiculos/', views.lista_veiculos, name='lista_veiculos'),
 ]
 

@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -35,17 +36,51 @@ def lista_areas(request):
 
 @login_required
 def lista_reservas(request):
+    from datetime import date
     hoje = date.today()
-
-    # acessa o morador relacionado ao usuário logado
-    apartamento = request.user.morador.apartamento
     
-    #filtra as reservas do morador de hoje em diante
-    #ordenado por data e hora de início
-    reservas = Reserva.objects.filter(apartamento = apartamento, data__gte = hoje).order_by('data', 'hora_inicio')
+    
+    reservas = Reserva.objects.filter(morador=request.user.morador, data__gte=hoje).order_by('data', 'hora_inicio')
+    
+    areas = AreaComum.objects.filter(ativo=True)
+    
+    return render(request, 'core/lista_reservas.html', {'reservas': reservas, 'areas': areas})
 
-    # renderiza o template html passando as reservas como contexto
-    return render(request, 'lista_reservas.html', {'reservas': reservas})
+@login_required
+def adicionar_reserva(request):
+    if request.method == 'POST':
+        area_id = request.POST.get('area')
+        data = request.POST.get('data')
+        hora_inicio = request.POST.get('hora_inicio')
+        hora_fim = request.POST.get('hora_fim')
+        morador = request.user.morador
+        area = get_object_or_404(AreaComum, id=area_id)
+
+        # verifica se existe alguma reserva no mesmo dia que se sobreponha ao horário pedido
+        conflitos = Reserva.objects.filter(
+            area=area,
+            data=data,
+            hora_inicio__lt=hora_fim,  # A hora de início da reserva existente é menor que a nova hora de fim
+            hora_fim__gt=hora_inicio   # A hora de fim da reserva existente é maior que a nova hora de início
+        )
+
+        if conflitos.exists():
+            messages.error(request, f"Lamentamos, mas a área '{area.nome}' já está reservada neste horário.")
+            return redirect('lista_reservas')
+
+        #se nao tiver conflito, cria a reserva
+        Reserva.objects.create(
+            area=area,
+            morador=morador,
+            data=data,
+            hora_inicio=hora_inicio,
+            hora_fim=hora_fim
+        )
+        
+        messages.success(request, "Reserva efetuada com sucesso!")
+        return redirect('lista_reservas')
+
+    return redirect('lista_reservas')
 
 @login_required
 def deleta_reserva(request, reserva_id):

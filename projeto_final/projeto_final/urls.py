@@ -22,3 +22,4 @@ urlpatterns = [
     path('', include('core.urls')),  # Incluindo as URLs do aplicativo core
     path('accounts/', include('django.contrib.auth.urls')),  # URLs de autenticação do Django
 ]
+

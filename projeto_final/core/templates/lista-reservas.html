@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+    {% if messages %}
+        <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+                <div>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div>
+        <h3>Adicionar Nova Reserva:</h3>
+
+        <form method="post" action="{% url 'adicionar_reserva' %}">
+            {% csrf_token %}
+            <label for="area">Área Comum:</label>
+            <select name="area" id="area" required>
+                {% for area in areas %}
+                    <option value="{{ area.id }}">{{ area.nome }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="data">Data:</label>
+            <input type="date" name="data" id="data" required><br><br>
+
+            <label for="hora_inicio">Hora de Início:</label>
+            <input type="time" name="hora_inicio" id="hora_inicio" required><br><br>
+
+            <label for="hora_fim">Hora de Fim:</label>
+            <input type="time" name="hora_fim" id="hora_fim" required><br><br>
+
+            <button type="submit">Confirmar Reserva</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>As Minhas Reservas Futuras:</h3>
+        <ul>
+            {% for r in reservas %}
+                <li style="margin-bottom: 15px;">
+                    <strong>{{ r.area.nome }}</strong>
+                    <ul>
+                        <li>Data: {{ r.data }}</li>
+                        <li>Horário: {{ r.hora_inicio }} - {{ r.hora_fim }}</li>
+                    </ul>
+                    
+                    <form action="{% url 'deleta_reserva' r.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Tem a certeza que deseja cancelar esta reserva?');" style="background-color: #ff4c4c; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                            Cancelar Reserva
+                        </button>
+                    </form>
+                </li>
+            {% empty %}
+                <li>Não tem nenhuma reserva agendada.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}

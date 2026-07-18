@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h3>Lista de Áreas do Condomínio:</h3>
+
+    {% for area in areas %}
+
+        <div class="area-card">
+            <h4>{{ area.nome }}</h4>
+            <p>{{ area.descricao }}</p>
+            <p>Status: {% if area.ativo %}Ativo{% else %}Inativo{% endif %}</p>
+        </div>
+
+        <div class="horarios-card">
+            <h5>Horários de Funcionamento:</h5>
+            <ul>
+                {% for horario in area.horarios.all %}
+                    <li>{{ horario.get_dia_semana_display }}: {{ horario.abertura }} - {{ horario.fechamento }}</li>
+                {% endfor %}
+            </ul>
+
+    {% endfor %}
+
+    <a href="{% url 'lista_reservas' %}"><button>Adicionar/Editar Reservas</button></a>
+
+
+        
+{% endblock %}
