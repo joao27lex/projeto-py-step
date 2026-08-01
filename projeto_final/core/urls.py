@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/login/', permanent=False)),    
+    path('', RedirectView.as_view(url='/login/', permanent=False)),  # Redireciona a raiz
     path('login/', views.login_morador, name='login'),
     path('dashboard/', views.dashboard_morador, name='dashboard'),
 

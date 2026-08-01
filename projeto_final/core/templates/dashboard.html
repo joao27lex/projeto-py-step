@@ -1,11 +1,11 @@
-{% extends 'core/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <h1>Bem-vindo ao Dashboard, {{user.username}}!</h1>
 
 <div class="notificacoes">
     <h3>Suas encomendas:</h3>
-    <p>Você tem {{ encomendas.count }} encomenda(s).</p>
+    <p>Você tem {{ total_encomendas }} encomenda(s).</p>
 
     <!-- TODO: botao que esconde essa parte do código -->
     <div id="lista-encomendas" style="display: none; margin-top: 10px;">

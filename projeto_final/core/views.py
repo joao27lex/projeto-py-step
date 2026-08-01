@@ -1,45 +1,49 @@
 from datetime import date
 
 from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
-from .models import  Visitante, AreaComum, Reserva, Encomenda, Veiculo
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Morador, Visitante, AreaComum, HorariosFuncionamento, Reserva, Encomenda, Veiculo, StatusEncomenda
 
 
 # Create your views here.
 
 def login_morador(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            auth_login(request, form.get_user())
             return redirect('dashboard')
-        else:
-            return render(request, 'login.html', {'erro': 'Usuário ou senha inválidos'})
-    return render(request, 'login.html')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'login.html', {'form': form})
+
+def get_morador(user):
+    # retorna o morador relacionado ao usuário, criando caso ainda não exista
+    return Morador.objects.get_or_create(user=user, defaults={'apartamento': '0000'})[0]
 
 # apenas quem tem login acessa
 @login_required
 def dashboard_morador(request):
     # acessa o morador relacionado ao usuário logado
-    apartamento = request.user.morador.apartamento 
+    apartamento = get_morador(request.user).apartamento 
 
     #filtra as encomendas do apartamento do morador que estao pendentes
-    encomendas = Encomenda.objects.filter(apartamento = apartamento, status = 'pendente')
+    encomendas = Encomenda.objects.filter(apartamento = apartamento, status = StatusEncomenda.PENDENTE)
+
+    contexto = {
+        "encomendas": encomendas,
+        "total_encomendas": encomendas.count()
+    }
 
     # renderiza o template html passando as encomendas como contexto
-    return render(request, 'dashboard.html', {'encomendas': encomendas})  
-
-@login_required(login_url='login')
-def listar_template(request):
-    usuarios = User.objects.all()
-    return render(request, 'usuarios/lista.html', {'usuarios': usuarios})
+    return render(request, 'dashboard.html',  contexto)  
 
 
 @login_required
@@ -48,7 +52,7 @@ def lista_areas(request):
     areas = AreaComum.objects.filter(ativo = True)
 
     #renderiza o template html passando as áreas como contexto
-    return render(request, 'lista_areas.html', {'areas': areas})
+    return render(request, 'lista-areas.html', {'areas': areas})
 
 
 @login_required
@@ -57,11 +61,11 @@ def lista_reservas(request):
     hoje = date.today()
     
     
-    reservas = Reserva.objects.filter(morador=request.user.morador, data__gte=hoje).order_by('data', 'hora_inicio')
+    reservas = Reserva.objects.filter(apartamento=get_morador(request.user), data__gte=hoje).order_by('data', 'hora_inicio')
     
     areas = AreaComum.objects.filter(ativo=True)
     
-    return render(request, 'core/lista_reservas.html', {'reservas': reservas, 'areas': areas})
+    return render(request, 'lista-reservas.html', {'reservas': reservas, 'areas': areas})
 
 @login_required
 def adicionar_reserva(request):
@@ -70,7 +74,7 @@ def adicionar_reserva(request):
         data = request.POST.get('data')
         hora_inicio = request.POST.get('hora_inicio')
         hora_fim = request.POST.get('hora_fim')
-        morador = request.user.morador
+        morador = get_morador(request.user)
         area = get_object_or_404(AreaComum, id=area_id)
 
         # verifica se existe alguma reserva no mesmo dia que se sobreponha ao horário pedido
@@ -88,7 +92,7 @@ def adicionar_reserva(request):
         #se nao tiver conflito, cria a reserva
         Reserva.objects.create(
             area=area,
-            morador=morador,
+            apartamento=morador,
             data=data,
             hora_inicio=hora_inicio,
             hora_fim=hora_fim
@@ -103,7 +107,7 @@ def adicionar_reserva(request):
 def deleta_reserva(request, reserva_id):
 
     # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = request.user.morador.apartamento
+    apartamento = get_morador(request.user).apartamento
 
     reserva = get_object_or_404(Reserva, id=reserva_id, apartamento=apartamento)
 
@@ -111,25 +115,27 @@ def deleta_reserva(request, reserva_id):
         reserva.delete()
         return redirect('lista_reservas')
     
+    # renderiza o template html de confirmação de deletar reserva, passando a reserva como contexto
+    return render(request, 'deleta-reservas.html', {'reserva': reserva})
 
 @login_required
 def lista_visitantes(request):
 
     # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = request.user.morador.apartamento
+    apartamento = get_morador(request.user).apartamento
 
     # filtra os visitantes relacionados ao apartamento do morador
     visitantes = Visitante.objects.filter(apartamento=apartamento)
 
     # renderiza o template html passando os visitantes como contexto
-    return render(request, 'lista_visitantes.html', {'visitantes': visitantes})
+    return render(request, 'lista-visitantes.html', {'visitantes': visitantes})
 
 
 @login_required
 def deleta_visitantes(request, visitante_id):
 
     # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = request.user.morador.apartamento
+    apartamento = get_morador(request.user).apartamento
 
     #filtra o visitante pelo id e pelo apartamento do morador, garantindo que o morador só possa deletar visitantes do seu próprio apartamento
     visitante = get_object_or_404(Visitante, id=visitante_id, apartamento = apartamento)
@@ -138,16 +144,19 @@ def deleta_visitantes(request, visitante_id):
 
         # redireciona para a lista de visitantes após a exclusão
         return redirect('lista_visitantes')
+    
+    # renderiza o template html de confirmação de deletar visitante, passando o visitante como contexto
+    return render(request, 'deleta-visitantes.html', {'visitante': visitante})
 
 @login_required
 def lista_veiculos(request):
 
     # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = request.user.morador.apartamento
+    apartamento = get_morador(request.user).apartamento
 
     # filtra os veículos relacionados ao morador logado
     veiculos = Veiculo.objects.filter(apartamento = apartamento)
 
     # renderiza o template html passando os veículos como contexto
-    return render(request, 'lista_veiculos.html', {'veiculos': veiculos})
+    return render(request, 'lista-veiculos.html', {'veiculos': veiculos})
     
