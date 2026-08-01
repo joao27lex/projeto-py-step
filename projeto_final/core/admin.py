@@ -25,9 +25,9 @@ class VisitanteAdmin(admin.ModelAdmin):
 
 @admin.register(Reserva)
 class ReservaAdmin(admin.ModelAdmin):
-    list_display = ('area', 'morador', 'data', 'hora_inicio', 'hora_fim')
-    list_filter = ('data',)
-    search_fields = ('area__nome', 'morador__user__username')
+    list_display = ('area', 'apartamento', 'data', 'hora_inicio', 'hora_fim')
+    list_filter = ('data', 'area')
+    search_fields = ('area__nome', 'apartamento__user__username')
 
 @admin.register(Encomenda)
 class EncomendaAdmin(admin.ModelAdmin):
@@ -37,6 +37,6 @@ class EncomendaAdmin(admin.ModelAdmin):
 
 @admin.register(Veiculo)
 class VeiculoAdmin(admin.ModelAdmin):
-    list_display = ('morador', 'placa', 'tipo', 'modelo', 'cor')
-    list_filter = ('tipo',)
-    search_fields = ('morador__user__username', 'placa', 'modelo')
+    list_display = ('apartamento', 'placa', 'tipo_veiculo', 'marca', 'modelo', 'cor', 'ano')
+    list_filter = ('tipo_veiculo',)
+    search_fields = ('apartamento__user__username', 'placa', 'modelo', 'marca')

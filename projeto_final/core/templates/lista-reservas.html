@@ -52,7 +52,7 @@
                     
                     <form action="{% url 'deleta_reserva' r.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" onclick="return confirm('Tem a certeza que deseja cancelar esta reserva?');" style="background-color: #ff4c4c; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                        <button type="submit" onclick="return confirm('Tem certeza que deseja cancelar esta reserva?');" >
                             Cancelar Reserva
                         </button>
                     </form>

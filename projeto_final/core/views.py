@@ -4,12 +4,24 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from .models import Morador, Visitante, AreaComum, HorariosFuncionamento, Reserva, Encomenda, Veiculo
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate
+from .models import  Visitante, AreaComum, Reserva, Encomenda, Veiculo
 
 
 # Create your views here.
 
 def login_morador(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'login.html', {'erro': 'Usuário ou senha inválidos'})
     return render(request, 'login.html')
 
 # apenas quem tem login acessa
@@ -23,6 +35,11 @@ def dashboard_morador(request):
 
     # renderiza o template html passando as encomendas como contexto
     return render(request, 'dashboard.html', {'encomendas': encomendas})  
+
+@login_required(login_url='login')
+def listar_template(request):
+    usuarios = User.objects.all()
+    return render(request, 'usuarios/lista.html', {'usuarios': usuarios})
 
 
 @login_required
@@ -94,8 +111,6 @@ def deleta_reserva(request, reserva_id):
         reserva.delete()
         return redirect('lista_reservas')
     
-    # renderiza o template html de confirmação de deletar reserva, passando a reserva como contexto
-    return render(request, 'deleta_reserva.html', {'reserva': reserva})
 
 @login_required
 def lista_visitantes(request):
@@ -123,9 +138,6 @@ def deleta_visitantes(request, visitante_id):
 
         # redireciona para a lista de visitantes após a exclusão
         return redirect('lista_visitantes')
-    
-    # renderiza o template html de confirmação de deletar visitante, passando o visitante como contexto
-    return render(request, 'deleta_visitantes.html', {'visitante': visitante})
 
 @login_required
 def lista_veiculos(request):

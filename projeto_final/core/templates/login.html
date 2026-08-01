@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
+
+{% block title %}Login - Django App{% endblock %}
+
 {% block content %}
-    <h1>Faça o Seu Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+<h2>Login</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="Usuário" required>
+    <input type="password" name="password" placeholder="Senha" required>
+    {% if erro %}
+        <div class="alert alert-error">{{ erro }}</div>
+    {% endif %}
+    <button type="submit">Entrar</button>
+</form>
 {% endblock %}
+          

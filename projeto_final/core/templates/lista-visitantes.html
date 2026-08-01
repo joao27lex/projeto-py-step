@@ -8,7 +8,7 @@
                 {{ v.nome }} 
                 <form action="{% url 'remover_visitante' v.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit">Remover</button>
+                    <button type="submit" onclick="return confirm('Deseja mesmo remover este visitante?')">Remover</button>
                 </form>
             </li>
         {% empty %}
