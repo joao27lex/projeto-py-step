@@ -49,7 +49,7 @@ def dashboard_morador(request):
 @login_required
 def lista_areas(request):
     # filtra as áreas comuns que estão ativas
-    areas = AreaComum.objects.filter(ativo = True)
+    areas = AreaComum.objects.filter()
 
     #renderiza o template html passando as áreas como contexto
     return render(request, 'lista-areas.html', {'areas': areas})
@@ -106,10 +106,9 @@ def adicionar_reserva(request):
 @login_required
 def deleta_reserva(request, reserva_id):
 
-    # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = get_morador(request.user).apartamento
+    morador = get_morador(request.user)
 
-    reserva = get_object_or_404(Reserva, id=reserva_id, apartamento=apartamento)
+    reserva = get_object_or_404(Reserva, id=reserva_id, apartamento=morador)
 
     if request.method == 'POST':
         reserva.delete()
@@ -122,10 +121,10 @@ def deleta_reserva(request, reserva_id):
 def lista_visitantes(request):
 
     # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = get_morador(request.user).apartamento
+    morador = get_morador(request.user)
 
     # filtra os visitantes relacionados ao apartamento do morador
-    visitantes = Visitante.objects.filter(apartamento=apartamento)
+    visitantes = Visitante.objects.filter(apartamento=morador)
 
     # renderiza o template html passando os visitantes como contexto
     return render(request, 'lista-visitantes.html', {'visitantes': visitantes})
@@ -133,12 +132,10 @@ def lista_visitantes(request):
 
 @login_required
 def deleta_visitantes(request, visitante_id):
-
-    # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = get_morador(request.user).apartamento
+    morador = get_morador(request.user)
 
     #filtra o visitante pelo id e pelo apartamento do morador, garantindo que o morador só possa deletar visitantes do seu próprio apartamento
-    visitante = get_object_or_404(Visitante, id=visitante_id, apartamento = apartamento)
+    visitante = get_object_or_404(Visitante, id=visitante_id, apartamento = morador)
     if request.method == 'POST':
         visitante.delete()
 
@@ -151,11 +148,10 @@ def deleta_visitantes(request, visitante_id):
 @login_required
 def lista_veiculos(request):
 
-    # acessa o apartamento do morador relacionado ao usuário logado
-    apartamento = get_morador(request.user).apartamento
+    morador = get_morador(request.user)
 
     # filtra os veículos relacionados ao morador logado
-    veiculos = Veiculo.objects.filter(apartamento = apartamento)
+    veiculos = Veiculo.objects.filter(apartamento = morador)
 
     # renderiza o template html passando os veículos como contexto
     return render(request, 'lista-veiculos.html', {'veiculos': veiculos})
