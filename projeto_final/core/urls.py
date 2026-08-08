@@ -4,9 +4,10 @@ from django.contrib.auth.views import LogoutView
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/login/', permanent=False)),  # Redireciona a raiz
+    path('', RedirectView.as_view(url='/login/', permanent=False)),  
     path('login/', views.login_morador, name='login'),
     path('dashboard/', views.dashboard_morador, name='dashboard'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
 
     path('lista_areas/', views.lista_areas, name='lista_areas'),
     path('lista_areas/reservas/', views.lista_reservas, name='lista_reservas'),

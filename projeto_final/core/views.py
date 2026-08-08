@@ -32,10 +32,10 @@ def get_morador(user):
 @login_required
 def dashboard_morador(request):
     # acessa o morador relacionado ao usuário logado
-    apartamento = get_morador(request.user).apartamento 
+    morador = get_morador(request.user)
 
     #filtra as encomendas do apartamento do morador que estao pendentes
-    encomendas = Encomenda.objects.filter(apartamento = apartamento, status = StatusEncomenda.PENDENTE)
+    encomendas = Encomenda.objects.filter(apartamento = morador, status = StatusEncomenda.PENDENTE)
 
     contexto = {
         "encomendas": encomendas,
