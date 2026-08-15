@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "projeto-python-step"
+version = "1.0.0"
+description = "API REST com FastAPI para o projeto final"
+requires-python = ">=3.10"
+dependencies = [
+    "asgiref==3.11.1",
+    "Django==6.0.7",
+    "djangorestframework==3.17.1",
+    "psycopg2-binary==2.9.12",
+    "python-dotenv==1.2.2",
+    "sqlparse==0.5.5",
+    "tzdata==2026.3",
+    "views==0.3"
+]
